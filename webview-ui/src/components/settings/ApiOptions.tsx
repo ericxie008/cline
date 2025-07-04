@@ -1,5 +1,6 @@
 import { useExtensionState } from "@/context/ExtensionStateContext"
 import { ModelsServiceClient } from "@/services/grpc-client"
+import { ApiConfiguration } from "@shared/api"
 import { StringRequest } from "@shared/proto/common"
 import { VSCodeDropdown, VSCodeOption } from "@vscode/webview-ui-toolkit/react"
 import { useCallback, useEffect, useState } from "react"
@@ -7,35 +8,33 @@ import { useInterval } from "react-use"
 import styled from "styled-components"
 import { OPENROUTER_MODEL_PICKER_Z_INDEX } from "./OpenRouterModelPicker"
 
-import { normalizeApiConfiguration } from "./utils/providerUtils"
-
-import { ClineProvider } from "./providers/ClineProvider"
-import { OpenRouterProvider } from "./providers/OpenRouterProvider"
-import { MistralProvider } from "./providers/MistralProvider"
-import { DeepSeekProvider } from "./providers/DeepSeekProvider"
-import { TogetherProvider } from "./providers/TogetherProvider"
-import { OpenAICompatibleProvider } from "./providers/OpenAICompatible"
-import { SambanovaProvider } from "./providers/SambanovaProvider"
 import { AnthropicProvider } from "./providers/AnthropicProvider"
 import { AskSageProvider } from "./providers/AskSageProvider"
-import { OpenAINativeProvider } from "./providers/OpenAINative"
-import { GeminiProvider } from "./providers/GeminiProvider"
-import { DoubaoProvider } from "./providers/DoubaoProvider"
-import { QwenProvider } from "./providers/QwenProvider"
-import { VertexProvider } from "./providers/VertexProvider"
-import GeminiCliProvider from "./providers/GeminiCliProvider"
-import { RequestyProvider } from "./providers/RequestyProvider"
-import { FireworksProvider } from "./providers/FireworksProvider"
-import { XaiProvider } from "./providers/XaiProvider"
-import { CerebrasProvider } from "./providers/CerebrasProvider"
-import { OllamaProvider } from "./providers/OllamaProvider"
-import { ClaudeCodeProvider } from "./providers/ClaudeCodeProvider"
-import { SapAiCoreProvider } from "./providers/SapAiCoreProvider"
 import { BedrockProvider } from "./providers/BedrockProvider"
-import { NebiusProvider } from "./providers/NebiusProvider"
+import { CerebrasProvider } from "./providers/CerebrasProvider"
+import { ClaudeCodeProvider } from "./providers/ClaudeCodeProvider"
+import { ClineProvider } from "./providers/ClineProvider"
+import { DeepSeekProvider } from "./providers/DeepSeekProvider"
+import { DoubaoProvider } from "./providers/DoubaoProvider"
+import { FireworksProvider } from "./providers/FireworksProvider"
+import GeminiCliProvider from "./providers/GeminiCliProvider"
+import { GeminiProvider } from "./providers/GeminiProvider"
 import { LiteLlmProvider } from "./providers/LiteLlmProvider"
-import { VSCodeLmProvider } from "./providers/VSCodeLmProvider"
 import { LMStudioProvider } from "./providers/LMStudioProvider"
+import { MistralProvider } from "./providers/MistralProvider"
+import { NebiusProvider } from "./providers/NebiusProvider"
+import { OllamaProvider } from "./providers/OllamaProvider"
+import { OpenAICompatibleProvider } from "./providers/OpenAICompatible"
+import { OpenAINativeProvider } from "./providers/OpenAINative"
+import { OpenRouterProvider } from "./providers/OpenRouterProvider"
+import { QwenProvider } from "./providers/QwenProvider"
+import { RequestyProvider } from "./providers/RequestyProvider"
+import { SambanovaProvider } from "./providers/SambanovaProvider"
+import { SapAiCoreProvider } from "./providers/SapAiCoreProvider"
+import { TogetherProvider } from "./providers/TogetherProvider"
+import { VertexProvider } from "./providers/VertexProvider"
+import { VSCodeLmProvider } from "./providers/VSCodeLmProvider"
+import { XaiProvider } from "./providers/XaiProvider"
 import { useApiConfigurationHandlers } from "./utils/useApiConfigurationHandlers"
 
 interface ApiOptionsProps {
@@ -76,6 +75,15 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 	const selectedProvider = apiConfiguration?.apiProvider
 
 	const { handleFieldChange } = useApiConfigurationHandlers()
+
+	// This function returns a function that can be used as an onChange handler for input fields.
+	// It extracts the value from the event and calls handleFieldChange with the correct field name.
+	const createHandleInputChange = useCallback(
+		(field: keyof ApiConfiguration) => (event: any) => {
+			handleFieldChange(field, event.target.value)
+		},
+		[handleFieldChange],
+	)
 
 	const [ollamaModels, setOllamaModels] = useState<string[]>([])
 
@@ -224,7 +232,7 @@ const ApiOptions = ({ showModelOptions, apiErrorMessage, modelIdErrorMessage, is
 			{apiConfiguration && selectedProvider === "gemini-cli" && (
 				<GeminiCliProvider
 					apiConfiguration={apiConfiguration}
-					handleInputChange={handleInputChange}
+					handleInputChange={createHandleInputChange}
 					showModelOptions={showModelOptions}
 					isPopup={isPopup}
 				/>
