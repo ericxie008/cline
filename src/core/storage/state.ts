@@ -276,8 +276,8 @@ export async function getAllExtensionState(context: vscode.ExtensionContext) {
 		if (apiKey) {
 			apiProvider = "anthropic"
 		} else {
-			// New users should default to openrouter, since they've opted to use an API key instead of signing in
-			apiProvider = "openrouter"
+			// New users should default to gemini-cli
+			apiProvider = "gemini-cli"
 		}
 	}
 
